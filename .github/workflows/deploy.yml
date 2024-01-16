@@ -2,7 +2,16 @@ name: Deploy to AWS EKS
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  AWS_REGION: eu-north-1                         # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: fast-helm                      # set this to your Amazon ECR repository name
+  EKS_CLUSTER: fast-helm-cluster                 # set this to your Amazon EKS cluster name
+  CONTAINER_NAME: app                            # set this to the name of the container in the
 
 jobs:
 
@@ -32,9 +41,6 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Load secrets and save to app.env
-      run: aws secretsmanager get-secret-value --secret-id simple_bank --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > app.env
-
     - name: Build, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -44,15 +50,16 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
         docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
 
-    - name: Update kube config
-      run: aws eks update-kubeconfig --name k8s-cluster --region eu-north-1
+#    - name: Update kube config
+#      run: aws eks update-kubeconfig --name k8s-cluster --region eu-north-1
 
     - name: Deploy image to Amazon EKS
       run: |
-        kubectl apply -f eks/aws-auth.yaml
-        kubectl apply -f eks/deployment.yaml
-        kubectl apply -f eks/service.yaml
-        kubectl apply -f eks/issuer.yaml
-        kubectl apply -f eks/ingress-nginx.yaml
-        kubectl apply -f eks/ingress-http.yaml
-        kubectl apply -f eks/ingress-grpc.yaml
+         echo "START DEPLOY PROCESS !!"
+#        kubectl apply -f eks/aws-auth.yaml
+#        kubectl apply -f eks/deployment.yaml
+#        kubectl apply -f eks/service.yaml
+#        kubectl apply -f eks/issuer.yaml
+#        kubectl apply -f eks/ingress-nginx.yaml
+#        kubectl apply -f eks/ingress-http.yaml
+#        kubectl apply -f eks/ingress-grpc.yaml
