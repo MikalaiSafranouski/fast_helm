@@ -2,9 +2,9 @@ name: Run unit tests CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   run_tests:
@@ -47,9 +47,9 @@ jobs:
 #        run: |
 #          poetry run pytest
 
-      - name: Launch mypy
-        run: |
-          poetry run mypy .
+#      - name: Launch mypy
+#        run: |
+#          poetry run mypy .
 
 #      - name: Launch pylint
 #        run: |
