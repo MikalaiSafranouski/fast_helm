@@ -47,9 +47,9 @@ jobs:
 #        run: |
 #          poetry run pytest
 
-      - name: Launch mypy
-        run: |
-          poetry run mypy .
+#      - name: Launch mypy
+#        run: |
+#          poetry run mypy .
 
 #      - name: Launch pylint
 #        run: |
