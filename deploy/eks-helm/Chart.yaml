@@ -1,0 +1,8 @@
+apiVersion: v2
+name: fast-helm
+description: A Helm chart for fast-helm-service
+
+type: application
+
+version: 0.1.0
+appVersion: "v0.0.0"

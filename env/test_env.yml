@@ -1,0 +1,15 @@
+version: "3.6"
+
+x-env: &env
+  environment:
+    # Application Variables
+    - DATABASE_URI=${DATABASE_URI:-postgresql+asyncpg://postgres@fast-db/testing}
+    - SQLALCHEMY_POOL_SIZE=${SQLALCHEMY_POOL_SIZE:-5}
+    - SQLALCHEMY_POOL_RECYCLE=${SQLALCHEMY_POOL_RECYCLE:-3600}
+    - SQLALCHEMY_WARN_20=1
+
+
+
+services:
+  test:
+    <<: *env

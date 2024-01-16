@@ -1,0 +1,12 @@
+image:
+  repository: safronovskiy/fast-messenger-service
+  tag: "v0.0.0"
+  pullPolicy: Always
+  servicePort: 80
+  containerPort: 8000
+
+replicaCount: 1
+securityContext: {}                                       # Empty securityContext
+
+configmap:
+  name: not-secret-variables

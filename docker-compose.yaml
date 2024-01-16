@@ -1,0 +1,71 @@
+version: "3.6"
+
+x-env: &env
+  environment:
+    - DATABASE_URI=${DATABASE_URI:-postgresql+asyncpg://postgres@fast-db/development}
+    - SQLALCHEMY_POOL_SIZE=${SQLALCHEMY_POOL_SIZE:-5}
+    - SQLALCHEMY_POOL_RECYCLE=${SQLALCHEMY_POOL_RECYCLE:-3600}
+    - SQLALCHEMY_WARN_20=1
+
+
+services:
+  base: &base
+    <<: *env
+    build: .
+    networks:
+      - fast-network
+    volumes:
+      - .:/usr/src/app
+
+
+  fast-web:
+    <<: *base
+    container_name: fast-web
+    ports:
+      - "8005:8000"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - fast-db
+    command: ["poetry", "run", "uvicorn", "app:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+
+
+  fast-db:
+    image: postgres:14.5
+    container_name: fast-db
+    environment:
+      - POSTGRES_DB=development
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=postgres
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    networks:
+      - fast-network
+    volumes:
+      - pgdata:/var/lib/postgresql/data/pgdata
+    ports:
+      - "5632:5432"
+
+
+  test:
+    <<: *base
+    depends_on:
+      - testdb
+
+  testdb:
+    image: postgres:14.5
+    environment:
+      - POSTGRES_DB=testing
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=postgres
+    networks:
+      - fast-network
+
+
+
+
+networks:
+  fast-network:
+    external: true
+
+volumes:
+  pgdata:
